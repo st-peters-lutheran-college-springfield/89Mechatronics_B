@@ -3,749 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Walking Robot — Class Notebook | Mechatronics Yr 8</title>
+<title>89 Mechatronics — Year B | Semester Course Home</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --navy:#0F2A4A; --blue:#1565C0; --sky:#2196F3; --teal:#00897B;
     --amber:#F59E0B; --red:#C62828; --mint:#E8F5E9; --ice:#E3F2FD;
-    --cream:#FFFDE7; --white:#FFFFFF; --off:#F8FAFC; --border:#DDE3EA;
+    --white:#FFFFFF; --off:#F8FAFC; --border:#DDE3EA;
     --text:#1A2332; --muted:#64748B;
     --mono:'Space Mono',monospace; --sans:'DM Sans',sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:var(--sans);background:#0D1B2A;color:var(--text);min-height:100vh;}
-  #app{display:flex;min-height:100vh;}
-  /* SIDEBAR */
-  #sidebar{width:250px;min-height:100vh;background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
-  .nb-brand{padding:18px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.1);}
-  .nb-brand h2{color:#fff;font-size:13px;font-weight:700;line-height:1.3;}
-  .nb-brand p{color:rgba(255,255,255,0.45);font-size:11px;margin-top:2px;}
-  .section-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.35);padding:8px 16px 4px;text-transform:uppercase;}
-  .nav-item{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;color:rgba(255,255,255,.65);font-size:13px;border-left:3px solid transparent;transition:all .15s;text-decoration:none;}
-  .nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
-  .nav-item.active{background:rgba(33,150,243,.18);border-left-color:var(--sky);color:#fff;}
-  .nav-item .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .nav-link-btn{display:flex;align-items:center;gap:9px;margin:6px 16px 0 16px;padding:9px 12px;background:#FFFFFF;color:var(--navy);text-decoration:none;font-size:13px;font-weight:700;border-radius:8px;border:1px solid var(--border);transition:all .15s;}
-  .nav-link-btn:hover{background:#F8FAFC;border-color:#BBDEFB;}
-  .nav-link-btn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-  .save-indicator{padding:10px 16px;font-size:11px;font-family:var(--mono);color:rgba(255,255,255,.4);border-top:1px solid rgba(255,255,255,.08);margin-top:auto;}
-  .save-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4CAF50;margin-right:6px;}
-  /* MAIN */
-  #main{margin-left:250px;background:var(--off);min-height:100vh;flex:1;}
-  .topbar{background:#fff;border-bottom:1px solid var(--border);padding:11px 28px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
-  .topbar .breadcrumb{font-size:12px;color:var(--muted);font-family:var(--mono);}
-  .topbar .page-title{font-size:15px;font-weight:700;color:var(--navy);margin-left:auto;}
-  .teams-badge{background:#4B53BC;color:#fff;font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600;}
-  /* PAGES */
-  .page{display:none;padding:28px;max-width:860px;}
-  .page.active{display:block;}
-  /* HERO */
-  .hero-card{background:linear-gradient(135deg,var(--navy) 0%,#1565C0 100%);border-radius:14px;padding:30px 36px;color:#fff;margin-bottom:24px;position:relative;overflow:hidden;}
-  .hero-card::after{content:'🦿';position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:64px;opacity:.12;}
-  .hero-card .kicker{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:8px;}
-  .hero-card h1{font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px;}
-  .hero-card p{font-size:14px;color:rgba(255,255,255,.8);line-height:1.6;max-width:520px;}
-  /* CARDS */
-  .card{background:#fff;border-radius:10px;border:1px solid var(--border);padding:22px 26px;margin-bottom:18px;}
-  .card-teal{border-left:4px solid var(--teal);}
-  .card-blue{border-left:4px solid var(--blue);}
-  .card-amber{border-left:4px solid var(--amber);}
-  .card-red{border-left:4px solid var(--red);}
-  .card-navy{border-left:4px solid var(--navy);}
-  .card-header{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
-  .card-header .icon{font-size:19px;}
-  .card-header h3{font-size:15px;font-weight:700;color:var(--navy);}
-  .card-header .tag{margin-left:auto;font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;}
-  .tag-green{background:#E8F5E9;color:#2E7D32;}
-  .tag-blue{background:#E3F2FD;color:#1565C0;}
-  .tag-amber{background:#FFF8E1;color:#F57F17;}
-  .tag-red{background:#FFEBEE;color:#C62828;}
-  /* TYPOGRAPHY */
-  .section-h{font-size:17px;font-weight:700;color:var(--navy);margin:24px 0 12px;}
-  .sub-h{font-size:14px;font-weight:600;color:var(--blue);margin:14px 0 6px;}
-  p,li{font-size:14px;line-height:1.7;color:var(--text);}
-  p+p{margin-top:8px;}
-  ul,ol{padding-left:20px;margin:8px 0;}
-  li{margin-bottom:5px;}
-  .mono{font-family:var(--mono);font-size:12px;}
-  .code-pill{display:inline-block;background:#1E2A3A;color:#7DD3FC;font-family:var(--mono);font-size:12px;padding:2px 8px;border-radius:4px;}
-  /* FORM ELEMENTS */
-  .student-header{background:#fff;border:2px solid var(--sky);border-radius:10px;padding:18px 22px;margin-bottom:22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-  .student-header label{font-weight:700;font-size:14px;color:var(--navy);white-space:nowrap;}
-  .student-header input{flex:1;min-width:180px;border:2px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--sans);font-size:14px;color:var(--text);outline:none;transition:border .15s;}
-  .student-header input:focus{border-color:var(--sky);}
-  .student-header .class-info{font-size:12px;color:var(--muted);font-family:var(--mono);}
-  textarea.response{width:100%;min-height:90px;border:2px solid var(--border);border-radius:8px;padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--text);resize:vertical;outline:none;transition:border .15s;background:#FAFCFF;line-height:1.6;}
-  textarea.response:focus{border-color:var(--sky);background:#fff;}
-  textarea.response.tall{min-height:130px;}
-  textarea.response.short{min-height:60px;}
-  input.response-line{width:100%;border:none;border-bottom:2px solid var(--border);padding:8px 4px;font-family:var(--sans);font-size:14px;color:var(--text);background:transparent;outline:none;transition:border .15s;}
-  input.response-line:focus{border-bottom-color:var(--sky);}
-  .form-label{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;display:block;}
-  .form-group{margin-bottom:16px;}
-  /* ACTIVITY BOXES */
-  .activity{border:2px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
-  .activity-hdr{display:flex;align-items:center;gap:9px;padding:12px 16px;font-weight:700;font-size:13px;}
-  .activity-hdr.teal{background:#E0F2F1;color:#00695C;}
-  .activity-hdr.blue{background:#E3F2FD;color:#0D47A1;}
-  .activity-hdr.amber{background:#FFF8E1;color:#E65100;}
-  .activity-hdr.purple{background:#EDE7F6;color:#4527A0;}
-  .activity-hdr.red{background:#FFEBEE;color:#B71C1C;}
-  .activity-body{padding:18px;background:#fff;}
-  /* CHECKLIST */
-  .check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px;}
-  .check-item:last-child{border:none;}
-  .check-item input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--sky);cursor:pointer;flex-shrink:0;}
-  .check-item label{cursor:pointer;line-height:1.5;}
-  /* CHALLENGE CARDS (radio-style selection) */
-  .challenge-card{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--border);border-radius:9px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .15s;}
-  .challenge-card:hover{border-color:#BBDEFB;background:#FAFCFF;}
-  .challenge-card.selected{border-color:var(--sky);background:var(--ice);}
-  .challenge-card input[type=radio]{width:18px;height:18px;margin-top:2px;accent-color:var(--sky);cursor:pointer;flex-shrink:0;}
-  .challenge-card .c-title{font-weight:700;color:var(--navy);font-size:14px;margin-bottom:3px;}
-  .challenge-card .c-desc{font-size:13px;color:var(--muted);line-height:1.55;}
-  .level-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:9px;margin-left:8px;vertical-align:middle;}
-  .level-entry{background:#E8F5E9;color:#2E7D32;}
-  .level-mid{background:#FFF8E1;color:#F57F17;}
-  .level-adv{background:#FFEBEE;color:#C62828;}
-  /* CONFIDENCE */
-  .conf-scale{display:flex;gap:0;margin-top:12px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
-  .conf-box{flex:1;text-align:center;padding:11px 5px;font-size:12px;cursor:pointer;transition:all .15s;border-right:1px solid var(--border);}
-  .conf-box:last-child{border:none;}
-  .conf-box:nth-child(1){background:#FFEBEE;}
-  .conf-box:nth-child(2){background:#FFF8E1;}
-  .conf-box:nth-child(3){background:#E8F5E9;}
-  .conf-box:nth-child(4){background:#E3F2FD;}
-  .conf-box:nth-child(5){background:#EDE7F6;}
-  .conf-box.selected{outline:3px solid var(--sky);outline-offset:-2px;filter:brightness(.9);}
-  .conf-box .num{font-size:19px;font-weight:700;display:block;}
-  /* EXPORT PANEL */
-  .export-panel{background:linear-gradient(135deg,#0F2A4A,#1565C0);border-radius:12px;padding:22px 24px;margin-top:22px;color:#fff;}
-  .export-panel h3{font-size:16px;font-weight:700;margin-bottom:6px;}
-  .export-panel p{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:14px;}
-  .export-btns{display:flex;gap:10px;flex-wrap:wrap;}
-  .btn-export{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s;}
-  .btn-teams{background:#4B53BC;color:#fff;}
-  .btn-teams:hover{background:#3a41a0;}
-  .btn-print{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);}
-  .btn-print:hover{background:rgba(255,255,255,.25);}
-  .btn-copy{background:#00897B;color:#fff;}
-  .btn-copy:hover{background:#00695C;}
-  .btn-onenote{background:#7B1FA2;color:#fff;}
-  .btn-onenote:hover{background:#6A1B9A;}
-  .btn-onenote-open{background:#E8DEF8;color:#4A148C;border:2px solid #CE93D8;}
-  .btn-onenote-open:hover{background:#CE93D8;}
-  /* ALERT */
-  .alert{border-radius:8px;padding:12px 16px;display:flex;gap:10px;margin-bottom:14px;font-size:13px;}
-  .alert-amber{background:#FFF8E1;border-left:4px solid var(--amber);color:#5D4037;}
-  .alert-blue{background:var(--ice);border-left:4px solid var(--sky);color:#0D47A1;}
-  .alert-green{background:var(--mint);border-left:4px solid var(--teal);color:#1B5E20;}
-  .alert-red{background:#FFEBEE;border-left:4px solid var(--red);color:#B71C1C;}
-  .alert-icon{font-size:17px;flex-shrink:0;}
-  /* TABLES */
-  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;}
-  th{background:var(--navy);color:#fff;padding:9px 12px;text-align:left;font-size:12px;font-weight:700;letter-spacing:.03em;}
-  td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
-  tr:nth-child(even) td{background:var(--ice);}
-  /* VIDEO */
-  .video-card{background:var(--navy);border-radius:10px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-  .video-thumb{width:110px;height:62px;border-radius:7px;background:#1565C0;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
-  .video-info h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:3px;}
-  .video-info p{color:rgba(255,255,255,.6);font-size:12px;line-height:1.5;}
-  .video-btn{margin-top:8px;display:inline-flex;align-items:center;gap:5px;background:var(--sky);color:#fff;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;}
-  /* PROCESS ROW */
-  .process-row{display:flex;gap:0;margin:14px 0 6px;overflow-x:auto;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
-  .p-step{flex:1;min-width:88px;text-align:center;padding:12px 8px 10px;background:#fff;}
-  .p-step.active{background:var(--sky);}
-  .p-step.active .p-icon,.p-step.active .p-label{color:#fff;}
-  .p-icon{font-size:20px;display:block;margin-bottom:4px;}
-  .p-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);}
-  .process-caption{font-size:12px;color:var(--muted);font-style:italic;}
-  .process-caption span{color:var(--blue);font-style:normal;font-weight:700;}
-  /* LI GRID */
-  .li-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
-  .li-box{border-radius:8px;padding:13px 15px;}
-  .li-know{background:var(--ice);border:1px solid #BBDEFB;}
-  .li-do{background:var(--mint);border:1px solid #A5D6A7;}
-  .li-box h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:7px;}
-  .li-box ul{padding-left:15px;font-size:13px;}
-  /* STEPS */
-  .steps{counter-reset:step;list-style:none;padding:0;}
-  .steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
-  .steps li::before{content:counter(step);background:var(--navy);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
-  .steps li .step-text{font-size:14px;line-height:1.6;}
-  /* PROGRESS */
-  .progress-section{background:#fff;border-radius:9px;padding:16px 18px;margin-bottom:18px;border:1px solid var(--border);}
-  .progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;}
-  .progress-track{background:#E2E8F0;border-radius:6px;height:7px;}
-  .progress-fill{height:7px;border-radius:6px;background:linear-gradient(90deg,var(--sky),var(--teal));}
-  /* PRINT */
-  @media print {
-    #sidebar,#sidebar *,.topbar,.export-panel,.video-btn,.alert-icon{display:none!important;}
-    #main{margin:0!important;}
-    .page{display:block!important;padding:16px!important;}
-    body{background:#fff!important;}
-    textarea.response,input.response-line,.student-header input{border-color:#999!important;background:#fff!important;}
-    .hero-card{background:#1F4E79!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  }
+  body{font-family:var(--sans);background:var(--off);color:var(--text);min-height:100vh;}
+
+  .topbar{background:#fff;border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;gap:12px;}
+  .topbar .brand{display:flex;align-items:center;gap:10px;}
+  .topbar .brand .icon{font-size:22px;}
+  .topbar .brand h2{font-size:14px;font-weight:700;color:var(--navy);line-height:1.3;}
+  .topbar .brand p{font-size:11px;color:var(--muted);font-family:var(--mono);}
+  .teams-badge{margin-left:auto;background:#4B53BC;color:#fff;font-size:11px;padding:3px 10px;border-radius:4px;font-weight:600;}
+
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,#1565C0 100%);padding:56px 32px 64px;color:#fff;text-align:center;position:relative;overflow:hidden;}
+  .hero::after{content:'⚙️';position:absolute;right:6%;top:20%;font-size:120px;opacity:.08;transform:rotate(-12deg);}
+  .hero::before{content:'🔧';position:absolute;left:6%;bottom:10%;font-size:90px;opacity:.08;transform:rotate(15deg);}
+  .hero .kicker{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.65);text-transform:uppercase;margin-bottom:12px;}
+  .hero h1{font-size:34px;font-weight:700;line-height:1.2;margin-bottom:12px;}
+  .hero p{font-size:15px;color:rgba(255,255,255,.82);line-height:1.6;max-width:560px;margin:0 auto;}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
+
+  .projects{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:-40px;margin-bottom:36px;position:relative;z-index:2;}
+  .pcard{background:#fff;border-radius:14px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(15,42,74,.10);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--text);transition:transform .15s, box-shadow .15s;}
+  .pcard:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,42,74,.16);}
+  .pcard .pcard-top{padding:22px 24px 18px;color:#fff;position:relative;overflow:hidden;}
+  .pcard .pcard-top::after{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:56px;opacity:.18;}
+  .pcard.robot .pcard-top{background:linear-gradient(135deg,var(--navy),#1565C0);}
+  .pcard.robot .pcard-top::after{content:'🦿';}
+  .pcard.spycar .pcard-top{background:linear-gradient(135deg,#4527A0,#7B1FA2);}
+  .pcard.spycar .pcard-top::after{content:'📡';}
+  .pcard .order-badge{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.2);margin-bottom:10px;}
+  .pcard h3{font-size:19px;font-weight:700;margin-bottom:5px;}
+  .pcard .pcard-sub{font-size:12px;color:rgba(255,255,255,.75);font-family:var(--mono);}
+  .pcard .pcard-body{padding:18px 24px 22px;flex:1;display:flex;flex-direction:column;}
+  .pcard .pcard-body p{font-size:13.5px;line-height:1.6;color:var(--muted);margin-bottom:16px;flex:1;}
+  .pcard .enter-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:7px;font-size:13px;font-weight:700;color:#fff;text-decoration:none;}
+  .pcard.robot .enter-btn{background:var(--navy);}
+  .pcard.spycar .enter-btn{background:#4527A0;}
+
+  .about{background:#fff;border:1px solid var(--border);border-radius:14px;padding:28px 30px;margin-bottom:28px;}
+  .about h2{font-size:19px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+  .about > p{font-size:14px;line-height:1.7;color:var(--muted);max-width:720px;margin-bottom:22px;}
+  .theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .theme-card{border-radius:10px;padding:15px 16px;border-top:3px solid;background:var(--off);}
+  .theme-card .t-icon{font-size:20px;margin-bottom:7px;}
+  .theme-card h4{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:5px;line-height:1.3;}
+  .theme-card p{font-size:12px;color:var(--muted);line-height:1.5;}
+  .theme-card.t1{border-color:var(--blue);}
+  .theme-card.t2{border-color:var(--amber);}
+  .theme-card.t3{border-color:var(--teal);}
+  .theme-card.t4{border-color:var(--red);}
+
+  .info-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;}
+  .info-pill{flex:1;min-width:220px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .info-pill h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
+  .info-pill a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--blue);text-decoration:none;}
+  .info-pill a:hover{text-decoration:underline;}
+  .info-pill p{font-size:13px;color:var(--text);line-height:1.5;}
+
+  footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;font-family:var(--mono);}
+
   @media(max-width:700px){
-    #sidebar{width:190px;}#main{margin-left:190px;}
-    .page{padding:14px;}
-    .li-grid{grid-template-columns:1fr;}
+    .projects{grid-template-columns:1fr;margin-top:-24px;}
+    .hero{padding:44px 20px 52px;}
+    .hero h1{font-size:26px;}
+    .theme-grid{grid-template-columns:1fr 1fr;}
   }
 </style>
 </head>
 <body>
-<div id="app">
-<!-- SIDEBAR -->
-<nav id="sidebar">
-  <div class="nb-brand">
-    <div style="font-size:20px;margin-bottom:3px;">📓</div>
-    <h2>Walking Robot<br>Class Notebook</h2>
-    <p>Mechatronics · Yr 8 · 89 MECA</p>
-  </div>
-  <div style="padding:8px 0;">
-    <a class="nav-item" href="../index.html" id="nav-alllink"><span class="dot" style="background:#FFFFFF"></span>← All Projects</a>
-  </div>
-  <div style="padding:8px 0;">
-    <div class="section-label">🏠 Home</div>
-    <div class="nav-item active" onclick="show('home')" id="nav-home"><span class="dot" style="background:#2196F3"></span>Unit Home</div>
-    <div class="nav-item" onclick="show('assessment_overview')" id="nav-assessment_overview"><span class="dot" style="background:#FF6F00"></span>Assessment Overview</div>
-  </div>
-  <div style="padding:8px 0;">
-    <div class="section-label">📚 Flipped Classroom</div>
-    <div class="nav-item" onclick="show('theory')" id="nav-theory"><span class="dot" style="background:#1565C0"></span>Watch: Design Process</div>
-  </div>
-  <div style="padding:8px 0;">
-    <div class="section-label">✏️ My Work</div>
-    <div class="nav-item" onclick="show('reflect')" id="nav-reflect"><span class="dot" style="background:#00897B"></span>Reflection Questions</div>
-    <div class="nav-item" onclick="show('challenge')" id="nav-challenge"><span class="dot" style="background:#7B1FA2"></span>Choose Your Challenge</div>
-  </div>
-  <div style="padding:8px 0;">
-    <div class="section-label">🔧 Reference</div>
-    <div class="nav-item" onclick="show('nextlesson')" id="nav-nextlesson"><span class="dot" style="background:#F59E0B"></span>Next Lesson Plan</div>
-    <div class="nav-item" onclick="show('extensions')" id="nav-extensions"><span class="dot" style="background:#37474F"></span>Extension Activities</div>
-  </div>
-  <div style="padding:8px 0;">
-    <div class="section-label">🏁 Assessment</div>
-    <div class="nav-item" onclick="show('checklist')" id="nav-checklist"><span class="dot" style="background:#FF6F00"></span>Pre-Class Checklist</div>
-  </div>
-  <div style="padding:8px 0;">
-    <div class="section-label">🚗 Course</div>
-    <a class="nav-item" href="../spy-car/index.html" id="nav-nextunit"><span class="dot" style="background:#FFFFFF"></span>Next Unit: RCV Spy Car →</a>
-  </div>
-  <div class="save-indicator" id="saveIndicator"><span class="save-dot"></span>Auto-saved</div>
-</nav>
-<!-- MAIN -->
-<main id="main">
-  <div class="topbar">
-    <span class="breadcrumb" id="breadcrumb">Content Library › Unit Home</span>
-    <span class="page-title" id="page-title">Unit Home</span>
-    <span class="teams-badge">MS Teams</span>
-  </div>
 
-  <!-- ════ PAGE: HOME ════ -->
-  <div class="page active" id="page-home">
-    <div class="hero-card">
-      <div class="kicker">Design &amp; Technologies · Year 8 · Queensland</div>
-      <h1>Improving Your Walking Robot</h1>
-      <p>Complete this flipped classroom activity before your next lesson — analyse your first laser-cut walking robot prototype and plan a targeted improvement using the engineering design process.</p>
-      <div style="margin-top:14px;display:flex;gap:9px;flex-wrap:wrap;">
-        <a href="https://teams.microsoft.com/l/channel/19%3ApgEw8ieyrTFnAkuBeeGO5nZwrQhoha8x9vyAGYXPE2o1%40thread.tacv2/General?groupId=8c64f881-7651-4950-8e26-340c7dd4ce4e&tenantId=ae5a198c-fb1e-470b-8570-36d829e69aed" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#4B53BC;color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">💬 Open Teams Class</a>
-        <a href="../index.html" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,.3);">🌐 All Projects</a>
-      </div>
-    </div>
-    <div class="alert alert-amber"><span class="alert-icon">👤</span><div><strong>First time here?</strong> Go to <strong>Watch: Design Process</strong> in the sidebar, then work through <strong>Reflection Questions</strong> and <strong>Choose Your Challenge</strong>. Your answers save automatically in this browser — export them to your OneNote logbook when you're done.</div></div>
-    <div class="progress-section">
-      <div class="progress-label"><span>Pre-Class Progress</span><span>Complete all My Work sections ✅</span></div>
-      <div class="progress-track"><div class="progress-fill" style="width:10%;" id="progressBar"></div></div>
-    </div>
-    <div class="section-h">How to Use This Notebook</div>
-    <ol class="steps">
-      <li><div class="step-text">Read <strong>Where You Left Off</strong> below, then open <strong>Watch: Design Process</strong> and watch the video before answering anything.</div></li>
-      <li><div class="step-text">Complete all six <strong>Reflection Questions</strong> — type directly into the text boxes. Your work saves automatically as you go.</div></li>
-      <li><div class="step-text">Open <strong>Choose Your Challenge</strong>, pick the improvement you'll prototype next lesson, and justify your choice.</div></li>
-      <li><div class="step-text">Tick off the <strong>Pre-Class Checklist</strong> before you arrive — you should have nothing left to catch up on.</div></li>
-      <li><div class="step-text">When finished, click <strong>Copy for OneNote Logbook</strong> on the Reflection Questions page and paste it in as one of your logbook entries.</div></li>
-    </ol>
-    <div class="li-grid">
-      <div class="li-box li-know"><h4>I will know…</h4><ul><li>How the engineering design process moves from prototype to improvement</li><li>The root cause of a problem in my own walking robot</li><li>What criteria and constraints apply to my redesign</li><li>How to measure whether a change actually helped</li></ul></div>
-      <div class="li-box li-do"><h4>I will be able to…</h4><ul><li>Diagnose why my robot's legs, gait or balance underperform</li><li>Brainstorm and select a targeted improvement</li><li>Plan a fair test to compare before/after performance</li><li>Redesign parts in Tinkercad ready for laser cutting</li></ul></div>
-    </div>
-    <div class="section-h">Where You Left Off</div>
-    <p class="mono" style="font-family:var(--sans);font-size:14px;line-height:1.7;">You have just completed your first prototype of a laser-cut walking robot — a plywood body powered by a hobby gearbox, with front and back legs driven by a crank-and-transmission mechanism. It was assembled from 3&nbsp;mm plywood panels that slot together like puzzle pieces.</p>
-    <div class="alert alert-blue" style="margin-top:12px;"><span class="alert-icon">💡</span><div>First-time prototypes are <strong>never perfect — and that is the point.</strong> Maybe your robot wobbles. Maybe the legs jam. Maybe the battery holder falls out during testing. Every one of these observations is valuable engineering data. In this activity you'll use the engineering design process to analyse what went wrong and plan a targeted improvement.</div></div>
-    <p style="font-size:13px;font-weight:700;color:var(--navy);margin:18px 0 8px;text-transform:uppercase;letter-spacing:.05em;">Where you are in the design cycle</p>
-    <div class="process-row">
-      <div class="p-step"><span class="p-icon">🔍</span><span class="p-label">Define</span></div>
-      <div class="p-step"><span class="p-icon">🧠</span><span class="p-label">Research</span></div>
-      <div class="p-step"><span class="p-icon">✏️</span><span class="p-label">Ideate</span></div>
-      <div class="p-step active"><span class="p-icon">🔨</span><span class="p-label">Prototype</span></div>
-      <div class="p-step active"><span class="p-icon">⚙️</span><span class="p-label">Test</span></div>
-      <div class="p-step active"><span class="p-icon">🚀</span><span class="p-label">Improve</span></div>
-    </div>
-    <p class="process-caption"><span>■ Shaded stages</span> = where you are right now in the engineering design cycle.</p>
-  </div>
-
-  <!-- ════ PAGE: ASSESSMENT OVERVIEW ════ -->
-  <div class="page" id="page-assessment_overview">
-    <div class="hero-card" style="background:linear-gradient(135deg,#FF6F00,#E65100)">
-      <div class="kicker">89 MECA · Ms Baessler · St Peters Lutheran College Springfield</div>
-      <h1>Assessment 1 — Tinkercad Walking Machine Project</h1>
-      <p>Generate a digital 3D model in Tinkercad and build the physical prototype and working model, individually and collaboratively.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
-      <div style="background:#FFEBEE;border:2px solid #C62828;border-radius:10px;padding:16px;text-align:center;">
-        <div style="font-size:24px;font-weight:700;color:#C62828;">12/08/2026</div>
-        <div style="font-size:13px;font-weight:700;color:#C62828;">CHECKPOINT</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">Finalise digital model — minimum 6 entries in logbook</div>
-      </div>
-      <div style="background:#FFEBEE;border:2px solid #C62828;border-radius:10px;padding:16px;text-align:center;">
-        <div style="font-size:24px;font-weight:700;color:#C62828;">02/09/2026</div>
-        <div style="font-size:13px;font-weight:700;color:#C62828;">DUE DATE</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">In-class submission</div>
-      </div>
-    </div>
-    <div class="section-h">What You Must Submit</div>
-    <div class="card card-navy">
-      <div class="card-header"><span class="icon">📁</span><h3>Submission Requirements</h3></div>
-      <table><tr><th>Item</th><th>Format</th></tr>
-      <tr><td><strong>Digital 3D model</strong></td><td>1× Tinkercad model of your walking machine</td></tr>
-      <tr><td><strong>Physical prototype</strong></td><td>1× laser-cut, assembled and working model</td></tr>
-      <tr><td><strong>Production logbook</strong></td><td>Digital logbook maintained in OneNote using the template your teacher provides — minimum 6 entries by the checkpoint</td></tr></table>
-    </div>
-    <div class="section-h">Marking Criteria Snapshot (A–E)</div>
-    <div class="card card-blue">
-      <div class="card-header"><span class="icon">📊</span><h3>Knowledge &amp; Understanding — Technologies contexts</h3></div>
-      <p><strong>Grade A</strong> — discerning explanation of how the features of technologies impact on design decisions across all 4 prescribed technologies contexts (engineering principles &amp; systems; materials &amp; technologies specialisations).</p>
-      <p><strong>Grade C</strong> — explanation of how the features of technologies impact on design decisions for each context.</p>
-    </div>
-    <div class="card card-teal">
-      <div class="card-header"><span class="icon">⚙️</span><h3>Processes &amp; Production Skills</h3></div>
-      <table><tr><th>Criterion</th><th>Grade A</th><th>Grade C</th></tr>
-      <tr><td><strong>Generating &amp; designing</strong></td><td>Comprehensive use of technical terms and graphical representation, including digital tools</td><td>Effective use of technical terms and graphical representation</td></tr>
-      <tr><td><strong>Producing &amp; implementing</strong></td><td>Proficient and safe production of designed solutions</td><td>Safe production of designed solutions</td></tr>
-      <tr><td><strong>Collaborating &amp; managing</strong></td><td>Comprehensive documentation and proficient management of production processes</td><td>Independent and collaborative documentation and management</td></tr></table>
-    </div>
-    <div class="alert alert-red"><span class="alert-icon">⚠️</span><div><strong>GenAI tools must NOT be used for this assessment task.</strong> This task requires you to demonstrate your own knowledge and skill acquisition. Using GenAI on the assessed task itself is treated as a breach of academic integrity — your teacher will observe your in-class work and may use annotations to record how your response developed. (Note: this notebook is simply a digital worksheet for typing up your own thinking — it does not generate answers for you.)</div></div>
-    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
-      <a href="https://stpetersqldedu.sharepoint.com/sites/89MECB2026/_layouts/15/Doc.aspx?sourcedoc=%7Bbbd8abc0-128d-44e9-98a7-7870f85b1ae7%7D&action=edit&wd=target%28Lesson%20Notes.one%7C364ff089-977f-4ef8-bcbc-8e6538be0a87%2F%29&wdorigin=717&wdsectionfileid=%7Bad805709-2acc-4e9b-976b-dc58be60dc72%7D&wdpreservelink=1" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#4B53BC;color:#fff;padding:9px 20px;border-radius:7px;font-size:13px;font-weight:700;text-decoration:none;">📓 Open My Production Logbook</a>
-      <a href="https://teams.microsoft.com/l/channel/19%3ApgEw8ieyrTFnAkuBeeGO5nZwrQhoha8x9vyAGYXPE2o1%40thread.tacv2/General?groupId=8c64f881-7651-4950-8e26-340c7dd4ce4e&tenantId=ae5a198c-fb1e-470b-8570-36d829e69aed" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:#fff;padding:9px 20px;border-radius:7px;font-size:13px;font-weight:700;text-decoration:none;">💬 Open Teams Class</a>
+<div class="topbar">
+  <div class="brand">
+    <div class="icon">📓</div>
+    <div>
+      <h2>89 Mechatronics · Year B</h2>
+      <p>St Peters Lutheran College Springfield</p>
     </div>
   </div>
-
-  <!-- ════ PAGE: THEORY / VIDEO ════ -->
-  <div class="page" id="page-theory">
-    <div class="hero-card" style="background:linear-gradient(135deg,#0D47A1,#1565C0)">
-      <div class="kicker">Flipped Classroom — Watch Before Class</div>
-      <h1>The Engineering Design Process</h1>
-      <p>Watch carefully. Pay attention to how engineers define a problem, generate multiple solutions, and measure whether their changes actually helped.</p>
-    </div>
-    <div class="video-card">
-      <div class="video-thumb">▶️</div>
-      <div class="video-info">
-        <h4>The Engineering Design Process</h4>
-        <p>YouTube · ~5 min<br>Defining problems · Criteria &amp; constraints · Brainstorming · Testing · Iterating</p>
-        <a class="video-btn" href="https://youtu.be/MAhpfFt_mWM?si=7FvwaYEj0xfHsDx6" target="_blank">▶ Watch Video</a>
-      </div>
-    </div>
-    <div class="alert alert-amber"><span class="alert-icon">💡</span><div><strong>Active watching tip:</strong> Keep the Reflection Questions page open in another tab. Pause the video whenever you spot a concept that connects to your walking robot.</div></div>
-    <div class="section-h">Watch For…</div>
-    <table><tr><th>Watch for…</th><th>Why it matters for YOUR robot</th></tr>
-    <tr><td>Defining the problem clearly</td><td>What is the specific, measurable problem with your robot? (wobble, leg jamming, battery falling out, slow speed?)</td></tr>
-    <tr><td>Criteria and constraints</td><td>What must your robot do (criteria)? What can you NOT change — same motor, same materials (constraints)?</td></tr>
-    <tr><td>Brainstorming multiple ideas</td><td>Engineers always generate several options before choosing one. How many ideas can you come up with for your problem?</td></tr>
-    <tr><td>Testing and measuring results</td><td>How will you prove your improvement actually made things better? What will you measure?</td></tr>
-    <tr><td>Iterating — improve, don't scrap</td><td>Good engineers tweak and refine. You are not starting from scratch; you are improving what you already built.</td></tr></table>
-    <div class="alert alert-blue"><span class="alert-icon">👉</span><div>Ready to answer questions? Click <strong>Reflection Questions</strong> in the sidebar.</div></div>
-  </div>
-
-  <!-- ════ PAGE: REFLECT ════ -->
-  <div class="page" id="page-reflect">
-    <div class="hero-card" style="background:linear-gradient(135deg,#00695C,#00897B)">
-      <div class="kicker">My Work — Reflect on Your Prototype</div>
-      <h1>Reflection Questions</h1>
-      <p>Answer all six questions in your own words. Be honest and specific — vague answers won't help you in the workshop. Your work saves automatically.</p>
-    </div>
-    <div class="student-header">
-      <label for="studentName">👤 Your Name:</label>
-      <input type="text" id="studentName" placeholder="First and last name" oninput="save()">
-      <label for="studentClass">Class:</label>
-      <input type="text" id="studentClass" placeholder="e.g. 89 MECA" style="max-width:100px;" oninput="save()">
-      <span class="class-info">Year 8 Mechatronics · Walking Robot Unit</span>
-    </div>
-    <div class="alert alert-blue"><span class="alert-icon">📺</span><div>Watch the video first if you haven't already: <a href="https://youtu.be/MAhpfFt_mWM?si=7FvwaYEj0xfHsDx6" target="_blank" style="color:#1565C0;font-weight:700;">The Engineering Design Process</a> — then come back and answer all six questions below.</div></div>
-    <div class="alert alert-amber"><span class="alert-icon">✍️</span><div>Write these in your own words — no GenAI tools, in line with your assessment task conditions. This page is just a digital place to type up your own thinking.</div></div>
-
-    <div class="activity">
-      <div class="activity-hdr teal">1️⃣ Observe Your Prototype</div>
-      <div class="activity-body">
-        <div class="form-group">
-          <label class="form-label">Describe one problem you noticed when you tested your walking robot. What exactly happened?</label>
-          <p style="font-size:11px;color:#00897B;margin-bottom:6px;">💡 Example: "The back legs dragged on the ground instead of lifting, so the robot barely moved forward."</p>
-          <textarea class="response tall" id="q1" placeholder="Type your answer here..." oninput="save()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="activity">
-      <div class="activity-hdr blue">2️⃣ Root Cause Analysis</div>
-      <div class="activity-body">
-        <div class="form-group">
-          <label class="form-label">Using the design process from the video — what is the root cause of your problem? Design issue, material issue, or assembly issue?</label>
-          <p style="font-size:11px;color:#00897B;margin-bottom:6px;">💡 Think about: leg geometry, joint friction, motor torque, weight distribution, crank offset…</p>
-          <textarea class="response tall" id="q2" placeholder="Type your answer here..." oninput="save()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="activity">
-      <div class="activity-hdr amber">3️⃣ Criteria &amp; Constraints</div>
-      <div class="activity-body">
-        <div class="form-group">
-          <label class="form-label">Write two criteria (things your improved robot MUST do) and one constraint (a limit you cannot change).</label>
-          <p style="font-size:11px;color:#00897B;margin-bottom:6px;">💡 Criteria: "must walk in a straight line for 30 cm." Constraint: "must use the existing gearbox and 2× AA batteries."</p>
-          <textarea class="response tall" id="q3" placeholder="Type your answer here..." oninput="save()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="activity">
-      <div class="activity-hdr purple">4️⃣ Brainstorm Solutions</div>
-      <div class="activity-body">
-        <div class="form-group">
-          <label class="form-label">List at least three different solutions to your problem. Quantity over quality at this stage — wild ideas welcome!</label>
-          <p style="font-size:11px;color:#00897B;margin-bottom:6px;">💡 Longer legs? Different leg angle? Added weights? Rubber feet? Different crank position?</p>
-          <textarea class="response tall" id="q4" placeholder="Type your answer here..." oninput="save()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="activity">
-      <div class="activity-hdr teal">5️⃣ Select Your Best Idea</div>
-      <div class="activity-body">
-        <div class="form-group">
-          <label class="form-label">Which idea will you prototype next class, and why? Use at least one reason connected to the design process video.</label>
-          <p style="font-size:11px;color:#00897B;margin-bottom:6px;">💡 Which directly addresses the root cause? Which can be tested quickly in one lesson?</p>
-          <textarea class="response tall" id="q5" placeholder="Type your answer here..." oninput="save()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="activity">
-      <div class="activity-hdr blue">6️⃣ Plan Your Test</div>
-      <div class="activity-body">
-        <div class="form-group">
-          <label class="form-label">How will you measure success next class? What test will you run, and what does "better" look like compared to your current prototype?</label>
-          <p style="font-size:11px;color:#00897B;margin-bottom:6px;">💡 Be specific: "I'll measure distance walked in 10 seconds" beats "I'll see if it walks better."</p>
-          <textarea class="response tall" id="q6" placeholder="Type your answer here..." oninput="save()"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="sub-h">How confident are you feeling about next lesson? (click to select)</div>
-    <div class="conf-scale">
-      <div class="conf-box" onclick="setConf(1,this)" id="conf1"><span class="num">1</span>Not yet</div>
-      <div class="conf-box" onclick="setConf(2,this)" id="conf2"><span class="num">2</span>Getting there</div>
-      <div class="conf-box" onclick="setConf(3,this)" id="conf3"><span class="num">3</span>Almost</div>
-      <div class="conf-box" onclick="setConf(4,this)" id="conf4"><span class="num">4</span>Confident</div>
-      <div class="conf-box" onclick="setConf(5,this)" id="conf5"><span class="num">5</span>Could teach it!</div>
-    </div>
-
-    <div class="export-panel">
-      <h3>📓 Add to Your Production Logbook</h3>
-      <p style="margin-bottom:6px;"><strong>Option A — OneNote Logbook (recommended):</strong> Click "Copy for OneNote" → open your logbook → paste as a new entry. Headings and tables will appear automatically — this counts towards your minimum 6 entries.</p>
-      <p style="margin-bottom:14px;"><strong>Option B — Teams post:</strong> Click "Copy for Teams" → open your class channel → paste into a new post.</p>
-      <div class="export-btns">
-        <button class="btn-export btn-onenote" onclick="copyReflectHTML()">📓 Copy for OneNote Logbook</button>
-        <a href="https://stpetersqldedu.sharepoint.com/sites/89MECB2026/_layouts/15/Doc.aspx?sourcedoc=%7Bbbd8abc0-128d-44e9-98a7-7870f85b1ae7%7D&action=edit&wd=target%28Lesson%20Notes.one%7C364ff089-977f-4ef8-bcbc-8e6538be0a87%2F%29&wdorigin=717&wdsectionfileid=%7Bad805709-2acc-4e9b-976b-dc58be60dc72%7D&wdpreservelink=1" target="_blank" class="btn-export btn-onenote-open">🔗 Open My Logbook</a>
-        <button class="btn-export btn-copy" onclick="copyReflectText()">💬 Copy for Teams</button>
-        <button class="btn-export btn-print" onclick="window.print()">🖨️ Print</button>
-      </div>
-      <div id="copyMsg" style="display:none;margin-top:10px;background:rgba(255,255,255,.15);border-radius:6px;padding:9px 14px;font-size:13px;">✅ Copied! Open your logbook → Paste (Ctrl+V / Cmd+V).</div>
-    </div>
-  </div>
-
-  <!-- ════ PAGE: CHALLENGE ════ -->
-  <div class="page" id="page-challenge">
-    <div class="hero-card" style="background:linear-gradient(135deg,#4527A0,#7B1FA2)">
-      <div class="kicker">My Work — Improvement Challenge Menu</div>
-      <h1>Choose Your Challenge</h1>
-      <p>Next class you will redesign parts in Tinkercad and re-cut them on the laser cutter. Choose at least one challenge to focus on. More demanding challenges earn additional design marks.</p>
-    </div>
-    <div class="student-header">
-      <label>👤 Name:</label>
-      <input type="text" id="challengeName" placeholder="Your name" oninput="save()">
-      <label>Date:</label>
-      <input type="text" id="challengeDate" placeholder="dd/mm/yyyy" style="max-width:130px;" oninput="save()">
-    </div>
-    <div class="section-h">Pick One (or more)</div>
-
-    <label class="challenge-card"><input type="radio" name="challenge" value="Leg Geometry" onchange="save()"><div><div class="c-title">🦿 Leg Geometry <span class="level-badge level-entry">Entry</span></div><div class="c-desc">The front leg is 80 mm, back leg 50 mm. The ratio and crank-pivot position directly affects stride length and walking efficiency. Redesign leg proportions to maximise forward movement per crank rotation.</div></div></label>
-
-    <label class="challenge-card"><input type="radio" name="challenge" value="Centre of Mass" onchange="save()"><div><div class="c-title">⚖️ Centre of Mass <span class="level-badge level-entry">Entry</span></div><div class="c-desc">A robot that tips forward or sideways wastes energy. Analyse where your robot's weight sits and redesign body panels or battery placement so the centre of mass is directly over the foot contact points.</div></div></label>
-
-    <label class="challenge-card"><input type="radio" name="challenge" value="Reduce Friction" onchange="save()"><div><div class="c-title">🔩 Reduce Friction <span class="level-badge level-mid">Intermediate</span></div><div class="c-desc">Wooden axle-and-lock joints create significant friction. Modify axle hole sizing, add wooden washers at each joint, or redesign the lock piece to reduce binding while keeping parts together.</div></div></label>
-
-    <label class="challenge-card"><input type="radio" name="challenge" value="Foot Design" onchange="save()"><div><div class="c-title">🐾 Foot Design <span class="level-badge level-mid">Intermediate</span></div><div class="c-desc">Flat-ended legs slip on smooth surfaces. Redesign the foot ends of both leg types to improve grip — consider angled contact surfaces or curved shapes inspired by animal locomotion. Test on two different surfaces.</div></div></label>
-
-    <label class="challenge-card"><input type="radio" name="challenge" value="Alternating Gait" onchange="save()"><div><div class="c-title">🏗️ Alternating Gait <span class="level-badge level-adv">Advanced</span></div><div class="c-desc">Currently left and right legs move in parallel. Redesign the crank wheel so legs are 180° out of phase, creating an alternating walking gait. Requires modifying wheel geometry to carry two offset axle positions.</div></div></label>
-
-    <label class="challenge-card"><input type="radio" name="challenge" value="Steering" onchange="save()"><div><div class="c-title">🔄 Steering <span class="level-badge level-adv">Advanced</span></div><div class="c-desc">Design a simple steering add-on — a passive caster under the body, or an asymmetric leg arrangement that creates a predictable curve. Document your design rationale with annotated sketches before cutting.</div></div></label>
-
-    <div class="form-group" style="margin-top:16px;">
-      <label class="form-label">One-sentence reason for your choice — you'll pitch it to your group at the start of next class:</label>
-      <textarea class="response" id="challengeReason" placeholder="I chose this challenge because..." oninput="save()"></textarea>
-    </div>
-
-    <div class="export-panel">
-      <h3>📓 Add Challenge Choice to Your Logbook</h3>
-      <p style="margin-bottom:14px;">Click "Copy for OneNote" → open your logbook → paste as a new entry, or use Teams to share with your group before class.</p>
-      <div class="export-btns">
-        <button class="btn-export btn-onenote" onclick="copyChallengeHTML()">📓 Copy for OneNote Logbook</button>
-        <a href="https://stpetersqldedu.sharepoint.com/sites/89MECB2026/_layouts/15/Doc.aspx?sourcedoc=%7Bbbd8abc0-128d-44e9-98a7-7870f85b1ae7%7D&action=edit&wd=target%28Lesson%20Notes.one%7C364ff089-977f-4ef8-bcbc-8e6538be0a87%2F%29&wdorigin=717&wdsectionfileid=%7Bad805709-2acc-4e9b-976b-dc58be60dc72%7D&wdpreservelink=1" target="_blank" class="btn-export btn-onenote-open">🔗 Open My Logbook</a>
-        <button class="btn-export btn-copy" onclick="copyChallengeText()">💬 Copy for Teams</button>
-        <button class="btn-export btn-print" onclick="window.print()">🖨️ Print</button>
-      </div>
-      <div id="copyChallengeMsg" style="display:none;margin-top:10px;background:rgba(255,255,255,.15);border-radius:6px;padding:9px 14px;font-size:13px;">✅ Copied! Open your logbook → Paste.</div>
-    </div>
-  </div>
-
-  <!-- ════ PAGE: NEXT LESSON ════ -->
-  <div class="page" id="page-nextlesson">
-    <div class="hero-card" style="background:linear-gradient(135deg,#E65100,#F57F17)">
-      <div class="kicker">Reference — What Happens Next Class</div>
-      <h1>Next Lesson Plan</h1>
-      <p>Here is the plan for your next lesson so you can prepare your thinking in advance.</p>
-    </div>
-    <table><tr><th>Time</th><th>Activity</th><th>What you need ready</th></tr>
-    <tr><td class="mono">0–10 min</td><td>Share &amp; Critique</td><td>Present your top idea to your table group and refine it based on feedback before committing to cutting.</td></tr>
-    <tr><td class="mono">10–20 min</td><td>Tinkercad Redesign</td><td>Modify your design for the parts you are improving. Re-export SVG and prepare in Inkscape. Double-check dimensions before cutting.</td></tr>
-    <tr><td class="mono">20–35 min</td><td>Laser Cut &amp; Assemble</td><td>Cut revised parts and fit the upgrade onto your existing robot body. Work efficiently — there may be time for a second iteration.</td></tr>
-    <tr><td class="mono">35–50 min</td><td>Test, Measure &amp; Compare</td><td>Run your planned test against the original robot. Record the data. Did your hypothesis hold? Complete the iteration log in your logbook.</td></tr></table>
-    <div class="section-h">Pre-Class Checklist</div>
-    <p>Tick everything off before arriving at next class — see the <strong>Pre-Class Checklist</strong> page in the sidebar for the interactive version.</p>
-  </div>
-
-  <!-- ════ PAGE: EXTENSIONS ════ -->
-  <div class="page" id="page-extensions">
-    <div class="hero-card" style="background:linear-gradient(135deg,#37474F,#546E7A)">
-      <div class="kicker">Reference — Optional</div>
-      <h1>Extension Activities</h1>
-      <p>For students who want to extend their thinking beyond the core activity.</p>
-    </div>
-    <div class="card card-blue">
-      <div class="card-header"><span class="icon">🤖</span><h3>Extension A — Compare Real Robots</h3></div>
-      <p>Research Boston Dynamics <em>Spot</em> or Honda <em>ASIMO</em>. How do their leg geometries compare to your robot? How do they solve balance and friction? Write a five-point comparison in your logbook.</p>
-    </div>
-    <div class="card card-teal">
-      <div class="card-header"><span class="icon">📋</span><h3>Extension B — Engineering Change Order</h3></div>
-      <p>Engineers keep detailed lab notebooks. Photograph your current robot, annotate the image with the problems you found, then write a brief Engineering Change Order explaining each planned modification and why.</p>
-    </div>
-    <div class="card card-amber">
-      <div class="card-header"><span class="icon">🔢</span><h3>Extension C — Gearbox Maths</h3></div>
-      <p>The hobby gearbox reduces speed and multiplies torque. Research a typical yellow gearbox gear ratio. Calculate the output torque and RPM. Does your robot need more torque or more speed to walk better?</p>
-    </div>
-  </div>
-
-  <!-- ════ PAGE: CHECKLIST ════ -->
-  <div class="page" id="page-checklist">
-    <div class="hero-card" style="background:linear-gradient(135deg,#E65100,#FF6F00)">
-      <div class="kicker">Assessment — Pre-Class Progress</div>
-      <h1>Pre-Class Checklist</h1>
-      <p>Tick everything off before arriving at next class. Students who arrive prepared will spend their time making and testing — not catching up.</p>
-    </div>
-    <div class="student-header">
-      <label>👤 Name:</label>
-      <input type="text" id="checkName" placeholder="Your name" oninput="save()">
-    </div>
-    <div class="check-item"><input type="checkbox" id="ck1" onchange="save()"><label for="ck1">Watched the full video and taken notes on the design process stages</label></div>
-    <div class="check-item"><input type="checkbox" id="ck2" onchange="save()"><label for="ck2">Written answers to all six reflection questions</label></div>
-    <div class="check-item"><input type="checkbox" id="ck3" onchange="save()"><label for="ck3">Sketched at least three possible improvements (rough hand-drawings are fine)</label></div>
-    <div class="check-item"><input type="checkbox" id="ck4" onchange="save()"><label for="ck4">Identified which improvement challenge I want to tackle</label></div>
-    <div class="check-item"><input type="checkbox" id="ck5" onchange="save()"><label for="ck5">Written a specific test plan — what I will measure and how I will know it is better</label></div>
-    <div class="check-item"><input type="checkbox" id="ck6" onchange="save()"><label for="ck6">Copied my reflection into my OneNote production logbook</label></div>
-    <div class="check-item"><input type="checkbox" id="ck7" onchange="save()"><label for="ck7">Workbook, pencil and laptop charged, ready to bring to class for iteration notes</label></div>
-    <div id="checkProgress" style="margin-top:18px;"></div>
-    <div class="export-panel">
-      <h3>📓 Add Checklist to Your Logbook</h3>
-      <p style="margin-bottom:14px;">Copy your progress checklist and paste into your logbook as evidence of pre-class preparation.</p>
-      <div class="export-btns">
-        <button class="btn-export btn-onenote" onclick="copyChecklistHTML()">📓 Copy for OneNote Logbook</button>
-        <a href="https://stpetersqldedu.sharepoint.com/sites/89MECB2026/_layouts/15/Doc.aspx?sourcedoc=%7Bbbd8abc0-128d-44e9-98a7-7870f85b1ae7%7D&action=edit&wd=target%28Lesson%20Notes.one%7C364ff089-977f-4ef8-bcbc-8e6538be0a87%2F%29&wdorigin=717&wdsectionfileid=%7Bad805709-2acc-4e9b-976b-dc58be60dc72%7D&wdpreservelink=1" target="_blank" class="btn-export btn-onenote-open">🔗 Open My Logbook</a>
-        <button class="btn-export btn-copy" onclick="copyChecklistText()">💬 Copy for Teams</button>
-      </div>
-      <div id="copyCheckMsg" style="display:none;margin-top:10px;background:rgba(255,255,255,.15);border-radius:6px;padding:9px 14px;font-size:13px;">✅ Copied! Open your logbook → Paste.</div>
-    </div>
-  </div>
-
-</main>
+  <span class="teams-badge">MS Teams</span>
 </div>
-<script>
-// ── PAGE NAVIGATION ──────────────────────────────────────────────
-const pageMap = {
-  home:                {bc:"Home › Unit Home",                       t:"Unit Home"},
-  assessment_overview: {bc:"Home › Assessment Overview",              t:"Assessment Overview"},
-  theory:              {bc:"Flipped Classroom › Watch: Design Process", t:"Watch: Design Process"},
-  reflect:             {bc:"My Work › Reflection Questions",          t:"Reflection Questions"},
-  challenge:           {bc:"My Work › Choose Your Challenge",         t:"Choose Your Challenge"},
-  nextlesson:          {bc:"Reference › Next Lesson Plan",            t:"Next Lesson Plan"},
-  extensions:          {bc:"Reference › Extension Activities",        t:"Extension Activities"},
-  checklist:           {bc:"Assessment › Pre-Class Checklist",        t:"Pre-Class Checklist"},
-};
-function show(id) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  const navEl = document.getElementById('nav-'+id);
-  if (navEl) navEl.classList.add('active');
-  document.getElementById('breadcrumb').textContent = pageMap[id].bc;
-  document.getElementById('page-title').textContent  = pageMap[id].t;
-  window.scrollTo(0,0);
-  updateCheckProgress();
-}
-// ── CONFIDENCE ───────────────────────────────────────────────────
-function setConf(n,el) {
-  for(let i=1;i<=5;i++) document.getElementById('conf'+i).classList.remove('selected');
-  el.classList.add('selected');
-  localStorage.setItem('wr_conf', n);
-}
-// ── AUTO-SAVE TO LOCALSTORAGE ────────────────────────────────────
-const FIELDS = ['studentName','studentClass','q1','q2','q3','q4','q5','q6','challengeName','challengeDate','challengeReason','checkName'];
-const CHECKS = ['ck1','ck2','ck3','ck4','ck5','ck6','ck7'];
-function getSelectedChallenge() {
-  const el = document.querySelector('input[name="challenge"]:checked');
-  return el ? el.value : '';
-}
-function save() {
-  FIELDS.forEach(id => { const el=document.getElementById(id); if(el) localStorage.setItem('wr_'+id, el.value); });
-  CHECKS.forEach(id => { const el=document.getElementById(id); if(el) localStorage.setItem('wr_'+id, el.checked); });
-  const challenge = getSelectedChallenge();
-  if (challenge) localStorage.setItem('wr_challenge', challenge);
-  document.querySelectorAll('.challenge-card').forEach(c=>{
-    const r = c.querySelector('input[type=radio]');
-    c.classList.toggle('selected', r && r.checked);
-  });
-  const si = document.getElementById('saveIndicator');
-  si.innerHTML = '<span class="save-dot" style="background:#4CAF50"></span>Saved ' + new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
-  updateCheckProgress();
-}
-function loadAll() {
-  FIELDS.forEach(id => { const el=document.getElementById(id); if(el && localStorage.getItem('wr_'+id)) el.value = localStorage.getItem('wr_'+id); });
-  CHECKS.forEach(id => { const el=document.getElementById(id); if(el) el.checked = localStorage.getItem('wr_'+id)==='true'; });
-  const conf = localStorage.getItem('wr_conf');
-  if(conf) { const el=document.getElementById('conf'+conf); if(el) el.classList.add('selected'); }
-  const challenge = localStorage.getItem('wr_challenge');
-  if(challenge) {
-    const el = document.querySelector('input[name="challenge"][value="'+challenge+'"]');
-    if(el){ el.checked = true; el.closest('.challenge-card').classList.add('selected'); }
-  }
-  updateCheckProgress();
-}
-// ── PROGRESS CHECKER ─────────────────────────────────────────────
-function updateCheckProgress() {
-  const total = 7; let ticked = 0;
-  for(let i=1;i<=total;i++) { const el=document.getElementById('ck'+i); if(el&&el.checked) ticked++; }
-  const pct = Math.round((ticked/total)*100);
-  const el = document.getElementById('checkProgress');
-  if(el) el.innerHTML = `<div style="background:#fff;border:1px solid var(--border);border-radius:9px;padding:14px 16px;"><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px;"><span>Checklist Progress</span><span><strong>${ticked}</strong>/${total} completed</span></div><div style="background:#E2E8F0;border-radius:6px;height:8px;"><div style="height:8px;border-radius:6px;background:linear-gradient(90deg,#2196F3,#00897B);width:${pct}%;transition:width .4s;"></div></div></div>`;
-  const pb = document.getElementById('progressBar');
-  if(pb) pb.style.width = Math.max(10, pct)+'%';
-}
-// ── COPY HELPERS ─────────────────────────────────────────────────
-function getVal(id) { const el=document.getElementById(id); return el ? (el.value||'(not answered)').trim() : '(not answered)'; }
-function getCk(id)  { const el=document.getElementById(id); return el&&el.checked ? '✅' : '☐'; }
-function copyHTML(htmlStr, msgId) {
-  try {
-    const blob = new Blob([htmlStr], {type:'text/html'});
-    const item = new ClipboardItem({'text/html': blob, 'text/plain': new Blob([htmlStr.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ')],{type:'text/plain'})});
-    navigator.clipboard.write([item]).then(()=>{
-      const msg=document.getElementById(msgId);
-      if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',6000);}
-    }).catch(()=>{
-      navigator.clipboard.writeText(htmlStr.replace(/<[^>]+>/g,'').replace(/\s+/g,' ')).then(()=>{
-        const msg=document.getElementById(msgId);
-        if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',6000);}
-      });
-    });
-  } catch(e) { alert('Could not copy. Please use Ctrl+A, Ctrl+C to copy your answers manually.'); }
-}
-function nb_style() { return `font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1A2332;`; }
-// ── HTML COPY: REFLECTION ────────────────────────────────────────
-function copyReflectHTML() {
-  const name = getVal('studentName'), cls = getVal('studentClass');
-  const conf = localStorage.getItem('wr_conf')||'—';
-  const date = new Date().toLocaleDateString('en-AU');
-  const ans = (label,id)=>`<p style="margin:0 0 4px;font-weight:bold;font-size:10pt;color:#555;">${label}</p><p style="margin:0 0 14px;background:#F8FAFF;border-left:4px solid #2196F3;padding:8px 12px;border-radius:0 6px 6px 0;">${(getVal(id)||'<em style="color:#aaa">Not answered</em>').replace(/\n/g,'<br>')}</p>`;
-  let h = `<div style="${nb_style()}">
-<h1 style="font-family:Calibri,Arial;font-size:16pt;background:linear-gradient(135deg,#0F2A4A,#1565C0);color:white;padding:16px 20px;border-radius:8px;margin-bottom:4px;">🦿 Walking Robot — Reflection Questions</h1>
-<p style="margin-bottom:16px;"><strong>Student:</strong> ${name} &nbsp;|&nbsp; <strong>Class:</strong> ${cls} &nbsp;|&nbsp; <strong>Date:</strong> ${date}</p>
-${ans('1. Observe Your Prototype — describe one problem you noticed:','q1')}
-${ans('2. Root Cause Analysis:','q2')}
-${ans('3. Criteria &amp; Constraints:','q3')}
-${ans('4. Brainstorm Solutions (at least 3):','q4')}
-${ans('5. Select Your Best Idea:','q5')}
-${ans('6. Plan Your Test:','q6')}
-<p style="background:#EDE7F6;border-radius:6px;padding:8px 12px;font-size:10pt;"><strong>Confidence rating:</strong> ${conf}/5 &nbsp;|&nbsp; <strong>Submitted:</strong> ${date}</p>
-<p style="font-size:9pt;color:#aaa;margin-top:8px;">Generated from Walking Robot Class Notebook</p>
-</div>`;
-  copyHTML(h,'copyMsg');
-}
-function copyReflectText() {
-  const name=getVal('studentName'),cls=getVal('studentClass'),conf=localStorage.getItem('wr_conf')||'—';
-  let txt=`WALKING ROBOT — REFLECTION QUESTIONS\nStudent: ${name} | Class: ${cls} | Date: ${new Date().toLocaleDateString('en-AU')}\n\n1. Observe: ${getVal('q1')}\n\n2. Root cause: ${getVal('q2')}\n\n3. Criteria & constraints: ${getVal('q3')}\n\n4. Brainstorm: ${getVal('q4')}\n\n5. Best idea: ${getVal('q5')}\n\n6. Test plan: ${getVal('q6')}\n\nConfidence: ${conf}/5`;
-  navigator.clipboard.writeText(txt).then(()=>{const msg=document.getElementById('copyMsg');if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',5000);}});
-}
-// ── HTML COPY: CHALLENGE ─────────────────────────────────────────
-function copyChallengeHTML() {
-  const name=getVal('challengeName'), date=getVal('challengeDate');
-  const challenge = localStorage.getItem('wr_challenge') || '(not selected)';
-  let h=`<div style="${nb_style()}">
-<h1 style="font-family:Calibri,Arial;font-size:16pt;background:linear-gradient(135deg,#4527A0,#7B1FA2);color:white;padding:16px 20px;border-radius:8px;margin-bottom:4px;">🔨 Walking Robot — Improvement Challenge</h1>
-<p style="margin-bottom:14px;"><strong>Student:</strong> ${name} &nbsp;|&nbsp; <strong>Date:</strong> ${date}</p>
-<p style="margin:0 0 4px;font-weight:bold;font-size:10pt;color:#555;">Challenge chosen:</p>
-<p style="margin:0 0 14px;background:#EDE7F6;border-left:4px solid #7B1FA2;padding:8px 12px;border-radius:0 6px 6px 0;font-weight:bold;">${challenge}</p>
-<p style="margin:0 0 4px;font-weight:bold;font-size:10pt;color:#555;">Reason:</p>
-<p style="margin:0 0 14px;background:#F8FAFF;border-left:4px solid #2196F3;padding:8px 12px;border-radius:0 6px 6px 0;">${(getVal('challengeReason')||'<em style="color:#aaa">Not answered</em>').replace(/\n/g,'<br>')}</p>
-<p style="font-size:9pt;color:#aaa;margin-top:8px;">Generated from Walking Robot Class Notebook</p>
-</div>`;
-  copyHTML(h,'copyChallengeMsg');
-}
-function copyChallengeText() {
-  const name=getVal('challengeName'), date=getVal('challengeDate');
-  const challenge = localStorage.getItem('wr_challenge') || '(not selected)';
-  let txt = `WALKING ROBOT — IMPROVEMENT CHALLENGE\nStudent: ${name} | Date: ${date}\n\nChallenge: ${challenge}\nReason: ${getVal('challengeReason')}`;
-  navigator.clipboard.writeText(txt).then(()=>{const msg=document.getElementById('copyChallengeMsg');if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',5000);}});
-}
-// ── HTML COPY: CHECKLIST ─────────────────────────────────────────
-function copyChecklistHTML() {
-  const name=getVal('checkName'), date=new Date().toLocaleDateString('en-AU');
-  const items=[['ck1','Watched full video, took notes'],['ck2','Answered all 6 reflection questions'],['ck3','Sketched 3+ possible improvements'],['ck4','Identified improvement challenge'],['ck5','Written a specific test plan'],['ck6','Copied reflection into OneNote logbook'],['ck7','Workbook, pencil, laptop ready']];
-  const total=7; let done=0; for(let i=1;i<=total;i++){const el=document.getElementById('ck'+i);if(el&&el.checked)done++;}
-  const pct=Math.round((done/total)*100);
-  let rows = items.map(([id,label])=>{const ok=document.getElementById(id)&&document.getElementById(id).checked;return `<tr><td style="border:1px solid #ccc;padding:7px 10px;font-size:18px;text-align:center;">${ok?'✅':'☐'}</td><td style="border:1px solid #ccc;padding:7px 10px;${ok?'':'color:#aaa'}">${label}</td></tr>`;}).join('');
-  let h=`<div style="${nb_style()}">
-<h1 style="font-family:Calibri,Arial;font-size:16pt;background:linear-gradient(135deg,#E65100,#FF6F00);color:white;padding:16px 20px;border-radius:8px;margin-bottom:4px;">🏁 Walking Robot — Pre-Class Checklist</h1>
-<p style="margin-bottom:8px;"><strong>Student:</strong> ${name} &nbsp;|&nbsp; <strong>Date:</strong> ${date}</p>
-<div style="background:#E3F2FD;border-radius:8px;padding:12px 16px;margin-bottom:16px;">
-  <strong>${done}/${total} items completed (${pct}%)</strong>
-  <div style="background:#BBD6EE;border-radius:6px;height:8px;margin-top:6px;"><div style="background:linear-gradient(90deg,#2196F3,#00897B);height:8px;border-radius:6px;width:${pct}%;"></div></div>
+
+<div class="hero">
+  <div class="kicker">Design and Digital &amp; Technologies · Year 8 &amp; 9 · Queensland</div>
+  <h1>89 Mechatronics — Year B</h1>
+  <p>Two build-and-code projects this year: start with the Walking Machine, then move on to the RCV Spy Car. Choose a project below to open its class notebook.</p>
 </div>
-<table style="border-collapse:collapse;width:100%;margin-bottom:14px;"><tr style="background:#0F2A4A;color:white;"><th style="border:1px solid #ccc;padding:7px 10px;width:50px;">Done</th><th style="border:1px solid #ccc;padding:7px 10px;">Item</th></tr>${rows}</table>
-<p style="font-size:9pt;color:#aaa;margin-top:8px;">Generated from Walking Robot Class Notebook</p>
-</div>`;
-  copyHTML(h,'copyCheckMsg');
-}
-function copyChecklistText() {
-  const name = getVal('checkName');
-  const items=['Watched full video, took notes','Answered all 6 reflection questions','Sketched 3+ possible improvements','Identified improvement challenge','Written a specific test plan','Copied reflection into OneNote logbook','Workbook, pencil, laptop ready'];
-  let txt = `WALKING ROBOT — PRE-CLASS CHECKLIST\nStudent: ${name} | Date: ${new Date().toLocaleDateString('en-AU')}\n\n`;
-  items.forEach((t,i)=>txt+=`${getCk('ck'+(i+1))} ${t}\n`);
-  navigator.clipboard.writeText(txt).then(()=>{const msg=document.getElementById('copyCheckMsg');if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',5000);}});
-}
-// ── INIT ─────────────────────────────────────────────────────────
-window.addEventListener('load', loadAll);
-</script>
+
+<div class="wrap">
+  <div class="projects">
+    <a class="pcard robot" href="walking-robot/index.html">
+      <div class="pcard-top">
+        <span class="order-badge">Project 1 · Term 1 &amp; 3</span>
+        <h3>Walking Robot</h3>
+        <div class="pcard-sub">Tinkercad Walking Machine</div>
+      </div>
+      <div class="pcard-body">
+        <p>For this task, you will work individually and collaboratively to generate a walking machine under the guidance of
+your teacher. You will create a prototype and working model:
+1. you will generate the digital 3D model in Tinkercad.
+2. you will generate the physical prototype and working model.
+What do I need to do to complete the task?
+You must document and manage your production processes by maintaining a digital logbook using the
+template provdided by their teacher on OneNot
+</p>
+        <span class="enter-btn">🦿 Open Class Notebook</span>
+      </div>
+    </a>
+
+    <a class="pcard spycar" href="spy-car/index.html">
+      <div class="pcard-top">
+        <span class="order-badge">Project 2 · Term 2 &amp; 4</span>
+        <h3>RCV Spy Car</h3>
+        <div class="pcard-sub">ESP32-CAM WiFi Robot</div>
+      </div>
+      <div class="pcard-body">
+        <p>Build a WiFi-controlled robot car with a live camera stream using the ESP32-CAM microcontroller, L298N motor driver, and Arduino code.</p>
+        <span class="enter-btn">📡 Open Class Notebook</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="about">
+    <h2>What is Mechatronics?</h2>
+    <p>Mechatronics combines 3D design, electronics and code to build machines that sense, think and move. In Term 1 you'll model in 3D, wire up sensors and outputs, and learn to code an Arduino Uno — recording each step in your digital logbook. In Term 2 you'll bring it all together: program, build and test your own robotic vehicle with working sensors and motors.</p>
+    <div class="theme-grid">
+      <div class="theme-card t1">
+        <div class="t-icon">⚙️</div>
+        <h4>Forces, Motion &amp; Energy</h4>
+        <p>How forces, motion and energy shape the way your machine moves.</p>
+      </div>
+      <div class="theme-card t2">
+        <div class="t-icon">🔌</div>
+        <h4>Electronics</h4>
+        <p>How circuits and materials behave — and how to wire them correctly.</p>
+      </div>
+      <div class="theme-card t3">
+        <div class="t-icon">🤖</div>
+        <h4>Robotics</h4>
+        <p>How complex machines are designed, built and operated.</p>
+      </div>
+      <div class="theme-card t4">
+        <div class="t-icon">💡</div>
+        <h4>Real-World Problem Solving</h4>
+        <p>Using engineering design to solve real problems in creative ways.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-pill">
+      <h4>Class Team</h4>
+      <a href="https://teams.microsoft.com/l/channel/19%3ApgEw8ieyrTFnAkuBeeGO5nZwrQhoha8x9vyAGYXPE2o1%40thread.tacv2/General?groupId=8c64f881-7651-4950-8e26-340c7dd4ce4e&tenantId=ae5a198c-fb1e-470b-8570-36d829e69aed" target="_blank">💬 Open Teams Class</a>
+    </div>
+    <div class="info-pill">
+      <h4>Production Logbook</h4>
+      <a href="https://stpetersqldedu.sharepoint.com/sites/89MECB2026/_layouts/15/Doc.aspx?sourcedoc=%7Bbbd8abc0-128d-44e9-98a7-7870f85b1ae7%7D&action=edit&wd=target%28Lesson%20Notes.one%7C364ff089-977f-4ef8-bcbc-8e6538be0a87%2F%29&wdorigin=717&wdsectionfileid=%7Bad805709-2acc-4e9b-976b-dc58be60dc72%7D" target="_blank">📓 Open OneNote Logbook</a>
+    </div>
+  </div>
+</div>
+
+<footer>89 MECB · Ms Baessler · St Peters Lutheran College Springfield</footer>
+
 </body>
 </html>
